@@ -6,6 +6,6 @@ class ForcedValueModelForm(forms.ModelForm):
         super(ForcedValueModelForm, self).__init__(*args, **kwargs)
     
     def clean(self, *args, **kwargs):
-        for k, v in self._forced_values:
+        for k, v in self._forced_values.items():
             setattr(self.instance, k, v)
         return super(ForcedValueModelForm, self).clean(*args, **kwargs)
