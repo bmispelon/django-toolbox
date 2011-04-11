@@ -39,6 +39,7 @@ class BaseCloudFilterNode(template.Node):
             return value
         
         context[self.var_name] = value
+        return ''
     
     def cloud_proxy(self, cloud, keyvalues):
         raise NotImplementedError
