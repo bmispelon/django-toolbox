@@ -28,7 +28,7 @@ class BaseCloudFilterNode(template.Node):
     
     def _keyvalues(self, context):
         for key, value in self.keyvalues:
-            yield key, self._normalize(value, context)
+            yield str(key), self._normalize(value, context)
     
     def render(self, context):
         cloud = self.cloud.resolve(context)
