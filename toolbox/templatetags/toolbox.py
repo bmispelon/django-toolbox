@@ -1,6 +1,7 @@
 from django import template
 from django.template.defaultfilters import floatformat as floatformat_
 from django.utils.encoding import smart_unicode
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -37,3 +38,18 @@ def intspace(i, spacer='\xc2\xa0'): # Non-breaking space
         format = i and '%03i' or '%i'
         acc.append(format % remainder)
     return spacer.join(reversed(acc))
+
+
+@register.filter
+def multifield_list(boundfield, idx=None):
+    # XXX
+    rendered = str(boundfield)
+    widgets = [mark_safe(w) for w in rendered.split('\n')]
+    
+    if idx is None:
+        return widgets
+    else:
+        try:
+            return widgets[int(idx)]
+        except IndexError:
+            return u''
