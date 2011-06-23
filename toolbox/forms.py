@@ -90,5 +90,11 @@ class MultiForm(object):
     def as_ul(self):
         return mark_safe('\n'.join(f.as_ul() for _x, f in self.forms))
     
+    def as_p(self):
+        return mark_safe('\n'.join(f.as_p() for _x, f in self.forms))
+    
+    def as_table(self):
+        return mark_safe('\n'.join(f.as_table() for _x, f in self.forms))
+    
     def __getitem__(self, key):
         return dict(self.forms)[key]
