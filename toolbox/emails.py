@@ -2,6 +2,10 @@ from django.core.mail import EmailMessage
 from django.template import Template, Context
 from django.template.loader import get_template
 
+SINGLELINE = 1
+MULTILINE = 2
+LIST = 3
+
 
 class EmailTemplate(object):
     """
@@ -53,25 +57,25 @@ class EmailTemplate(object):
         return message_class(**self._render_kwargs(context))
     
     def render_subject(self, context):
-        return self._render_attr('subject', context, single=True)
+        return self._render_attr('subject', context, SINGLELINE)
     
     def render_body(self, context):
-        return self._render_attr('body', context, single=True)
+        return self._render_attr('body', context, MULTILINE, strip=False)
     
     def render_from_email(self, context):
-        return self._render_attr('from_email', context, single=True)
+        return self._render_attr('from_email', context, SINGLELINE)
     
     def render_to(self, context):
-        return self._render_attr('to', context, single=False)
+        return self._render_attr('to', context, LIST)
     
     def render_cc(self, context):
-        return self._render_attr('cc', context, single=False)
+        return self._render_attr('cc', context, LIST)
     
     def render_bcc(self, context):
-        return self._render_attr('bcc', context, single=False)
+        return self._render_attr('bcc', context, LIST)
     
     def render_headers(self, context):
-        return self._render_attr('headers', context, single=False)
+        return self._render_attr('headers', context, LIST)
     
     def _render_kwargs(self, context):
         """
@@ -81,7 +85,7 @@ class EmailTemplate(object):
         
         return dict((arg, getattr(self, 'render_%s' % arg)(context)) for arg in args)
     
-    def _render_attr(self, attr, context, single=True, strip=True):
+    def _render_attr(self, attr, context, field_type, strip=True):
         """
         Return the value of a given attribute within the context.
         If single is True, multiple lines in the value will be joined by a space.
@@ -95,17 +99,24 @@ class EmailTemplate(object):
         if is_template:
             value = value.render(Context(context))
         
-        # At this point, value is always a string
-        assert isinstance(value, basestring)
+        if field_type == SINGLELINE:
+            # Split, strip, join
+            value = value.split('\n')
+            if strip:
+                value = [l.strip() for l in value]
+            return ' '.join(value)
         
-        lines = value.split('\n')
-        if strip:
-            lines = [line.strip() for line in lines]
+        elif field_type == MULTILINE:
+            if strip:
+                value = value.strip()
+            return value
         
-        if single:
-            return ' '.join(lines)
-        else:
-            return lines
+        elif field_type == LIST:
+            if isinstance(value, basestring):
+                value = value.split('\n')
+            if strip:
+                value = [l.strip() for l in value]
+            return value
     
     def _fetch_attr(self, attr):
         """
