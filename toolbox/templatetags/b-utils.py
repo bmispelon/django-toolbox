@@ -9,11 +9,14 @@ from django.utils.safestring import mark_safe
 register = template.Library()
 
 FIELDWRAPPER_TPL = u"""
-<div class="fieldWrapper">
+<div class="%(wrapper_class)s">
     %(errors)s
     %(label)s :%(break)s
     %(field)s
 </div>"""
+
+DEFAULT_WRAPPER_CLASS = 'fieldWrapper'
+
 
 
 class BLabeledField(object):
@@ -41,8 +44,8 @@ class BLabeledField(object):
 
 class BWrappedField(object):
     """A small class that allows chaining the different filters."""
-    def __init__(self, field, br=False):
-        self.field, self.br = field, br
+    def __init__(self, field, br=False, klass=None):
+        self.field, self.br, self.klass = field, br, klass
     
     def __unicode__(self):
         field = self.field
@@ -54,15 +57,41 @@ class BWrappedField(object):
         else:
             label = None
         
-        return self.render(field, label=label, br=br)
+        return self.render(field, label=label, br=br, klass=self.klass)
     
-    def render(self, field, label=None, br=False):
+    def render(self, field, label=None, br=False, klass=None):
+        if klass is None:
+            klass = DEFAULT_WRAPPER_CLASS
+        
         return mark_safe(FIELDWRAPPER_TPL % {
             'errors': field.errors,
             'label': blabel(field, label),
             'break': br and u'<br />' or u'',
-            'field': field
+            'field': field,
+            'wrapper_class': klass
         })
+
+
+class BClassedField(object):
+    """A small class that allows adding custom css classes to form fields.
+    If the item passed is a regular django field, the class will be added to it.
+    If it's an instance of BWrappedField, the class is added to the fieldWrapper.'"""
+    def __init__(self, field, klass):
+        self.field, self.klass = field, klass
+    
+    def __unicode__(self):
+        klass = self.make_class()
+        field = self.field
+        if isinstance(field, BWrappedField):
+            field.klass = klass
+            return field.__unicode__()
+        return field.as_widget(attrs={'class': klass})
+    
+    def make_class(self):
+        l = self.klass.strip().split()
+        if isinstance(self.field, BWrappedField):
+            l.append(DEFAULT_WRAPPER_CLASS)
+        return ' '.join(l)
 
 @register.filter
 def blabel(field, label=None):
@@ -80,3 +109,9 @@ def bwrap(field, break_after_label=False):
     Its output can be chained to the bfilter filter to combine them."""
     
     return BWrappedField(field, break_after_label)
+
+
+@register.filter
+def bclass(field, extra_class):
+    """Adds a css class to either a django form field or a wrapped field."""
+    return BClassedField(field, extra_class)
