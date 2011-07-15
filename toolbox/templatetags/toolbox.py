@@ -29,7 +29,7 @@ def intspace(i, spacer='\xc2\xa0'): # Non-breaking space
     
     try:
         i = int(i)
-    except ValueError:
+    except (ValueError, TypeError):
         return u''
     
     acc = []
