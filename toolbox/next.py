@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
+from django.http import HttpResponseRedirect
 from django.views import generic
 
 class NextMixin(object):
@@ -15,6 +16,9 @@ class NextMixin(object):
     def get_success_url(self):
         next = self.request.REQUEST.get(self.next_field_name)
         return next or self.get_default_next_url()
+    
+    def redirect(self):
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class CreateView(NextMixin, generic.CreateView):
