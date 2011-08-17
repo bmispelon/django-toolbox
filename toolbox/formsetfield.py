@@ -42,7 +42,7 @@ class FormsetField(Field):
     def clean(self, formset):
         if formset.is_valid():
             return formset.cleaned_data
-        raise ValidationError
+        raise ValidationError('Invalid formset')
 
 
 class BoundFormsetField(BoundField):
