@@ -146,3 +146,11 @@ class EmailTemplate(object):
         if not isinstance(value, basestring) and value is not None:
             value = "\n".join(value)
         return value, False
+
+
+class HtmlEmailTemplate(EmailTemplate):
+    """An HTML-only email template."""
+    def render(self, context=None):
+        email = super(HtmlEmailTemplate, self).render(context)
+        email.content_subtype = 'html'
+        return email
