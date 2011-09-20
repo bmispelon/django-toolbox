@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.safestring import mark_safe
+from itertools import chain
 
 class ForcedValueModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -30,8 +31,8 @@ class ExtraCleanModelForm(forms.ModelForm):
 class MultiForm(object):
     """
     A ducktyped form class that wraps several forms into one entity.
-    A MultiForm class should have a forms property that is an iterable of
-    (form_prefix, form_class) tuples.
+    A MultiForm class should have a forms property (or a get_forms method )
+    that is an iterable of (form_name, form_class) tuples.
     """
     
     def __init__(self, *args, **kwargs):
@@ -41,7 +42,7 @@ class MultiForm(object):
         extra_kwargs = kwargs.pop('extra_kwargs', {})
 
         _l = []
-        for name, form_class in self.forms:
+        for name, form_class in self.get_forms():
             k = {
                 'prefix': self.get_prefix(name),
                 'initial': self.get_initial(name),
@@ -56,6 +57,10 @@ class MultiForm(object):
             _l.append((name, form_class(*args, **k)))
         
         self.forms = _l
+    
+    def get_forms(self):
+        """Return an iterable of (form_name, form_class)"""
+        return self.forms
     
     def get_prefix(self, name):
         if self.prefix is None:
@@ -98,3 +103,19 @@ class MultiForm(object):
     
     def __getitem__(self, key):
         return dict(self.forms)[key]
+    
+    def __iter__(self):
+        for _x, form in self.forms:
+            for field in form:
+                yield field
+
+
+class BooleanRadioSelect(forms.RadioSelect):
+    """A widget to use radio buttons for a BooleanField"""
+    def get_renderer(self, name, value, attrs=None, choices=()):
+        """Returns an instance of the renderer."""
+        if value is None: value = ''
+        str_value = value and u"1" or u"0"
+        final_attrs = self.build_attrs(attrs)
+        choices = list(chain(self.choices, choices))
+        return self.renderer(name, str_value, final_attrs, choices)
