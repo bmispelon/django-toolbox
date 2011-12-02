@@ -1,5 +1,5 @@
 from django import template
-from django.template.defaultfilters import floatformat as floatformat_
+from django.template.defaultfilters import floatformat as floatformat_, slice_ as template_slice
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 
@@ -53,3 +53,16 @@ def multifield_list(boundfield, idx=None):
             return widgets[int(idx)]
         except IndexError:
             return u''
+
+
+@register.filter
+def firstline(txt):
+    """Return the first line of a text."""
+    return txt.split('\n')[0]
+
+
+@register.filter
+def slicelines(txt, arg):
+    """Like django's slice template tag but converts the (text) argument
+    to a list of lines first."""
+    return '\n'.join(template_slice(txt.split('\n'), arg))
