@@ -10,7 +10,7 @@ class NextMixin(object):
     
     def get_default_next_url(self):
         if self.default_next_urlname is None:
-            raise ImproperlyConfigured('No default URL to redirect to.')
+            return self.request.META['HTTP_REFERER']
         return reverse(self.default_next_urlname)
     
     def get_success_url(self):
