@@ -112,3 +112,11 @@ def bclass(field, klass=None):
 @register.filter
 def bhelptext(field, helptext=None):
     return BField.factory(field, helptext=helptext)
+
+@register.filter
+def bform(form):
+    try:
+        wrapped_fields = [bwrap(field) for field in form]
+    except TypeError:
+        return u""
+    return mark_safe('\n'.join(wrap.render() for wrap in wrapped_fields))
