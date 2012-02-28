@@ -42,6 +42,12 @@ class BField(object):
             return cls(field, **kwargs)
     
     def __unicode__(self):
+        try:
+            return self.render()
+        except AttributeError:
+            return u''
+    
+    def render(self):
         """Render the node as HTML"""
         if self.wrap is None:
             if self.label is None:
