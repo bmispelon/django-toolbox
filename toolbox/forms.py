@@ -66,7 +66,7 @@ class MultiForm(object):
         if self.prefix is None:
             return name
         else:
-            return '%s-%s' % (global_prefix, name)
+            return '%s-%s' % (self.prefix, name)
     
     def get_initial(self, name):
         if self.initial is None:
