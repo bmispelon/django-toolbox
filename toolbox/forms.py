@@ -92,14 +92,20 @@ class MultiForm(object):
         # Children class should implement this
         raise NotImplementedError
     
+    def _as_foo(self, foo):
+        """Render the various as_p, as_ul or as_table method of self.forms."""
+        method = 'as_%s' % foo
+        rendered = '\n'.join(getattr(f, method)() for _x, f in self.forms)
+        return mark_safe(rendered)
+    
     def as_ul(self):
-        return mark_safe('\n'.join(f.as_ul() for _x, f in self.forms))
+        return self._as_foo('ul')
     
     def as_p(self):
-        return mark_safe('\n'.join(f.as_p() for _x, f in self.forms))
+        return self._as_foo('p')
     
     def as_table(self):
-        return mark_safe('\n'.join(f.as_table() for _x, f in self.forms))
+        return self._as_foo('table')
     
     def __getitem__(self, key):
         return dict(self.forms)[key]
