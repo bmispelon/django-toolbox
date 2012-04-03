@@ -88,6 +88,10 @@ class MultiForm(object):
     def cleaned_data(self):
         return dict((name, f.cleaned_data) for name, f in self.forms)
     
+    @property
+    def errors(self):
+        return dict((name, f.errors) for name, f in self.forms if f.errors)
+    
     def save(self):
         # Children class should implement this
         raise NotImplementedError
