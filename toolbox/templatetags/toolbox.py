@@ -2,6 +2,7 @@ from django import template
 from django.template.defaultfilters import floatformat as floatformat_, slice_ as template_slice
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
+from itertools import izip
 
 register = template.Library()
 
@@ -66,3 +67,34 @@ def slicelines(txt, arg):
     """Like django's slice template tag but converts the (text) argument
     to a list of lines first."""
     return '\n'.join(template_slice(txt.split('\n'), arg))
+
+
+class ZipChain(object):
+    """Allow chaining several calls to the zip filter."""
+    def __init__(self, *iterables):
+        self.iterables = iterables
+    
+    def add_iterables(self, *iterables):
+        self.iterables.extend(iterable)
+    
+    @classmethod
+    def factory(cls, var, *iterables):
+        if isinstance(var, cls):
+            var.add_iterables(*iterables)
+            return var
+        else:
+            return cls(var, *iterables)
+    
+    def __iter__(self):
+        return izip(*self.iterables)
+
+
+@register.filter('zip')
+def zip_(a, b):
+    """Zips two iterable together. Useful with forloops for example.
+    Usage: {% for foo, bar in foos|zip:bars %}
+    Can be chained to zip more than two iterables:
+    {% for foo, bar, baz in foos|zip:bars|zip:bazes %}
+    
+    """
+    return ZipChain.factory(a, b)
