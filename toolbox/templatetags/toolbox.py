@@ -1,5 +1,9 @@
 from django import template
-from django.template.defaultfilters import floatformat as floatformat_, slice_ as template_slice
+from django.template.defaultfilters import floatformat as floatformat_
+try: # django < 1.4
+    from django.template.defaultfilters import slice_ as slice_filter
+except ImportError: # django 1.4
+    from django.template.defaultfilters import slice_filter
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 from itertools import izip
@@ -66,7 +70,7 @@ def firstline(txt):
 def slicelines(txt, arg):
     """Like django's slice template tag but converts the (text) argument
     to a list of lines first."""
-    return '\n'.join(template_slice(txt.split('\n'), arg))
+    return '\n'.join(slice_filter(txt.split('\n'), arg))
 
 
 class ZipChain(object):
