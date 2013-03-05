@@ -120,3 +120,25 @@ def bform(form):
     except TypeError:
         return u""
     return mark_safe('\n'.join(wrap.render() for wrap in wrapped_fields))
+
+def split_fields(fields):
+    """Normalize the given argument to return a list of field names.
+    The supported formats are:
+        * A list of str (return unchanged)
+        * A string of comma-separated fields
+        * A string of whitespace-separated fields
+    """
+    if isinstance(fields, basestring):
+        fields = fields.replace(',', ' ').split()
+    return fields
+
+@register.filter
+def bfilter(form, fields):
+    """Return only the given fields from the given form (as a list)."""
+    return [form[f] for f in split_fields(fields)]
+
+@register.filter
+def bexclude(form, excluded):
+    """Return a list of all the fields in the given form, except those excluded."""
+    excluded = set(split_fields(excluded))
+    return [form[f] for f in form.fields if f not in excluded]
