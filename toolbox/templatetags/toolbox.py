@@ -102,3 +102,14 @@ def zip_(a, b):
     
     """
     return ZipChain.factory(a, b)
+
+
+@register.filter
+def sortby(sequence, sort_key=None):
+    if sort_key is None:
+        return sorted(sequence)
+
+    def sort_function(item):
+        return getattr(item, sort_key)
+
+    return sorted(sequence, key=sort_function)
