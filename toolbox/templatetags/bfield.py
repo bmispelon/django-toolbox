@@ -13,7 +13,7 @@ register = template.Library()
 FIELDWRAPPER_TPL = u"""
 <div class="%(wrapper_class)s">
     %(errors)s
-    %(label)s :%(break)s
+    %(label)s%(break)s
     %(field)s
     %(helptext)s
 </div>"""
