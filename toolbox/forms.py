@@ -13,14 +13,6 @@ class ForcedValueModelForm(forms.ModelForm):
         return super(ForcedValueModelForm, self).clean(*args, **kwargs)
 
 class ExtraCleanModelForm(forms.ModelForm):
-    def _mark_error(self, field, error, clean_data):
-        self._errors[field] = self.error_class([error])
-        try:
-            del clean_data[field]
-        except KeyError:
-            pass
-    
-    
     def clean(self):
         cleaned = self.cleaned_data
         for name, field in self.fields.items():
