@@ -15,6 +15,12 @@ FIELDWRAPPER_TPL = u"""
     %(field)s
 </div>"""
 
+FIELDWRAPPER_TPL_NO_LABEL = u"""
+<div class="%(wrapper_class)s">
+    %(errors)s
+    %(field)s
+</div>"""
+
 DEFAULT_WRAPPER_CLASS = 'fieldWrapper'
 
 
@@ -44,8 +50,11 @@ class BLabeledField(object):
 
 class BWrappedField(object):
     """A small class that allows chaining the different filters."""
-    def __init__(self, field, br=False, klass=None):
-        self.field, self.br, self.klass = field, br, klass
+    def __init__(self, field, br=False, klass=None, show_label=True):
+        self.field = field
+        self.br = br
+        self.klass = klass
+        self.show_label = show_label 
     
     def __unicode__(self):
         field = self.field
@@ -57,11 +66,20 @@ class BWrappedField(object):
         else:
             label = None
         
-        return self.render(field, label=label, br=br, klass=self.klass)
+        return self.render(field, label=label, br=br, klass=self.klass, show_label=self.show_label)
     
-    def render(self, field, label=None, br=False, klass=None):
+    def render(self, field, label=None, br=False, klass=None, show_label=True):
         if klass is None:
             klass = DEFAULT_WRAPPER_CLASS
+
+        if show_label == False:
+            return mark_safe(FIELDWRAPPER_TPL_NO_LABEL % {
+                'errors': field.errors,
+                'label': blabel(field, label),
+                'break': br and u'<br />' or u'',
+                'field': field,
+                'wrapper_class': klass
+            })
         
         return mark_safe(FIELDWRAPPER_TPL % {
             'errors': field.errors,
@@ -109,6 +127,14 @@ def bwrap(field, break_after_label=False):
     Its output can be chained to the bfilter filter to combine them."""
     
     return BWrappedField(field, break_after_label)
+
+
+@register.filter
+def bwrap_no_label(field):
+    """Wraps a field and its errors into a <div> without label.
+    The text of the label can also be customized."""
+    
+    return BWrappedField(field, show_label=False)
 
 
 @register.filter
