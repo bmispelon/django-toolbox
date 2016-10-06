@@ -29,7 +29,8 @@ class NextMixin(object):
     
     def get_success_url(self):
         """Look for a redirect URL in the request parameters (GET or POST)."""
-        next = self.request.REQUEST.get(self.next_field_name)
+        field_name = self.next_field_name
+        next = self.request.POST.get(field_name, self.request.GET.get(field_name))
         return next or self.get_default_next_url()
     
     def redirect(self):
