@@ -52,6 +52,10 @@ class MultiForm(object):
             _l.append((name, form_class(*args, **k)))
         
         self.forms = _l
+
+        combined_initial = {k: f.initial for k, f in self.forms if f.initial is not None}
+        if combined_initial:
+            self.initial = combined_initial
     
     def get_forms(self):
         """Return an iterable of (form_name, form_class)"""
