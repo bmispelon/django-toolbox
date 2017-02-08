@@ -86,6 +86,10 @@ class MultiForm(object):
     @property
     def errors(self):
         return dict((name, f.errors) for name, f in self.forms if f.errors)
+
+    @property
+    def is_bound(self):
+        return any(f.is_bound for _, f in self.forms)
     
     def save(self):
         # Children class should implement this
