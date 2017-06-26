@@ -1,3 +1,4 @@
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.template import Template, Context
 from django.template.loader import get_template
@@ -46,12 +47,15 @@ class EmailTemplate(object):
     def get_message_class(self, context):
         return self.message_class
     
-    def render(self, context=None):
+    def render(self, context=None, request=None):
         """
         Instanciate an email message with the given context.
         """
         if context is None:
             context = {}
+        
+        if request is not None:
+            context['site'] = get_current_site(request)
         
         message_class = self.get_message_class(context)
         return message_class(**self._render_kwargs(context))
