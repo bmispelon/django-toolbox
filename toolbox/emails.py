@@ -152,9 +152,28 @@ class EmailTemplate(object):
         return value, False
 
 
+def _make_links_absolute(html, base_url):
+    """
+    Make all links absolute in the given HTML (relative to the given base_url).
+    """
+    from lxml.html import fromstring, tostring
+    parsed = fromstring(html)
+
+    parsed.make_links_absolute(base_url)
+
+    return tostring(parsed)
+
+
 class HtmlEmailTemplate(EmailTemplate):
     """An HTML-only email template."""
-    def render(self, context=None, request=None):
+
+    def render(self, context=None, request=None, make_links_absolute=False):
         email = super(HtmlEmailTemplate, self).render(context, request=request)
         email.content_subtype = 'html'
+
+        if make_links_absolute:
+            assert request is not None
+            site = get_current_site(request)
+            email.body = _make_links_absolute(email.body, base_url='https://' + site.domain)
+
         return email
