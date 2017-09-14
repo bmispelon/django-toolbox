@@ -164,19 +164,6 @@ def _make_links_absolute(html, base_url):
     return tostring(parsed)
 
 
-def emailstr(name, email):
-    """
-    Return a properly quoted email string given the name and email address.
-    """
-    if not name:
-        return email
-
-    return u'"{}" <{}>'.format(
-        name.replace('"', '\\"'),
-        email,
-    )
-
-
 class HtmlEmailTemplate(EmailTemplate):
     """An HTML-only email template."""
 
