@@ -23,6 +23,8 @@ DEFAULT_WRAPPER_CLASS = 'fieldWrapper'
 WRAP_BREAK = 1
 WRAP_NOBREAK = 2
 
+_USE_FIELD_LABEL = object()
+
 
 class BField(object):
     def __init__(self, field, wrap=None, label=None, klass=None, helptext=None):
@@ -73,9 +75,9 @@ class BField(object):
     def render_label(self):
         """Render a label tag corresponding to the field with a custom text.
         The self.klass parameter is not taken into account."""
-        label = conditional_escape(self.label)
+        label = self.field.label if self.label is _USE_FIELD_LABEL else self.label
         attrs = self.field.errors and {'class': 'hasError'} or None
-        return self.field.label_tag(contents=self.label, attrs=attrs)
+        return self.field.label_tag(contents=label, attrs=attrs)
     
     def render_field(self):
         """Render the form field, with a custom css class added."""
@@ -94,7 +96,7 @@ class BField(object):
 
 
 @register.filter
-def blabel(field, label=None):
+def blabel(field, label=_USE_FIELD_LABEL):
     return BField.factory(field, label=label)
 
 @register.filter
