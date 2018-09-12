@@ -94,6 +94,9 @@ class MultiForm(object):
     @property
     def is_bound(self):
         return any(f.is_bound for _, f in self.forms)
+
+    def is_multipart(self):
+        return any(f.is_multipart() for _, f in self.forms)
     
     def save(self):
         # Children class should implement this
