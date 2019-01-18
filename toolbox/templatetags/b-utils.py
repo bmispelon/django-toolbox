@@ -44,8 +44,10 @@ class BLabeledField(object):
         return self.render(self.field, label)
     
     def render(self, field, label=None):
-        attrs = self.field.errors and {'class': 'hasError'} or None
-        return self.field.label_tag(contents=self.label, attrs=attrs)
+        if not field:
+            return u''
+        attrs = field.errors and {'class': 'hasError'} or None
+        return field.label_tag(contents=self.label, attrs=attrs)
 
 
 class BWrappedField(object):
@@ -69,6 +71,9 @@ class BWrappedField(object):
         return self.render(field, label=label, br=br, klass=self.klass, show_label=self.show_label)
     
     def render(self, field, label=None, br=False, klass=None, show_label=True):
+        if not field:
+            return u''
+
         if klass is None:
             klass = DEFAULT_WRAPPER_CLASS
 
@@ -103,7 +108,7 @@ class BClassedField(object):
         if isinstance(field, BWrappedField):
             field.klass = klass
             return field.__unicode__()
-        return field.as_widget(attrs={'class': klass})
+        return field.as_widget(attrs={'class': klass}) if field else ''
     
     def make_class(self):
         l = self.klass.strip().split()
