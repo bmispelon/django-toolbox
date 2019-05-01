@@ -6,22 +6,8 @@ from django.core.exceptions import ValidationError
 
 
 class FormWithFormsetField(Form):
-    def _boundfield(self, field, name):
-        if isinstance(field, FormsetField):
-            return BoundFormsetField(self, field, name)
-        return BoundField(self, field, name)
-
-    def __iter__(self):
-        for name, field in self.fields.items():
-            yield self._boundfield(self, field, name)
-
-    def __getitem__(self, name):
-        "Returns a BoundField with the given name."
-        try:
-            field = self.fields[name]
-        except KeyError:
-            raise KeyError('Key %r not found in Form' % name)
-        return self._boundfield(field, name)
+    pass  # Only kept for legacy reason
+    # TODO: remove this class
 
 
 class FormsetWidget(Widget):
@@ -43,6 +29,9 @@ class FormsetField(Field):
         if formset.is_valid():
             return formset.cleaned_data
         raise ValidationError('Invalid formset')
+
+    def get_bound_field(self, form, field_name):
+        return BoundFormsetField(form, self, field_name)
 
 
 class BoundFormsetField(BoundField):
