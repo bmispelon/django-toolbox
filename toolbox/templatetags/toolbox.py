@@ -22,7 +22,13 @@ def percent(sample, total, floatformat=-2):
     """Prints out the percentage of `sample` with regard to `total`.
     The output is passed through django's floatformat template filter
     and can be controlled using the floatformat parameter."""
-    f = 100. * sample / total
+    if total == 0 and sample != 0:
+        raise ValueError("Invalid sample value given to percent (total is 0 but value is {!r})".format(sample))
+
+    if total == 0:
+        f = 0
+    else:
+        f = 100. * sample / total
     return floatformat_(f, floatformat)
 
 @register.filter
