@@ -59,7 +59,13 @@ class EmailTemplate(object):
         
         message_class = self.get_message_class(context)
         return message_class(**self._render_kwargs(context))
-    
+
+    @classmethod
+    def send_immediately(cls, **context):
+        tpl = cls()
+        msg = tpl.render(context)
+        return msg.send()
+
     def render_subject(self, context):
         return self._render_attr('subject', context, SINGLELINE)
     
