@@ -1,6 +1,6 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
-from django.template import Template, Context
+from django.template import engines
 from django.template.loader import get_template
 
 SINGLELINE = 1
@@ -107,7 +107,7 @@ class EmailTemplate(object):
             return None
         
         if is_template:
-            value = value.render(Context(context))
+            value = value.render(context)
         
         if field_type == SINGLELINE:
             # Split, strip, join
@@ -151,7 +151,7 @@ class EmailTemplate(object):
         if template is not None:
             if not isinstance(template, basestring):
                 template = "\n".join(template)
-            return Template(template), True
+            return engines['django'].from_string(template), True
             
         if not isinstance(value, basestring) and value is not None:
             value = "\n".join(value)
