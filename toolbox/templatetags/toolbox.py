@@ -45,7 +45,7 @@ def intspace(i, spacer=u'\N{NO-BREAK SPACE}'):
     
     acc = []
     while i:
-        remainder, i = i % 1000, i / 1000
+        i, remainder = divmod(i, 1000)
         format = i and '%03i' or '%i'
         acc.append(format % remainder)
     return spacer.join(reversed(acc))
