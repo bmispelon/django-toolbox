@@ -32,7 +32,7 @@ def percent(sample, total, floatformat=-2):
     return floatformat_(f, floatformat)
 
 @register.filter
-def intspace(i, spacer='\xc2\xa0'): # Non-breaking space
+def intspace(i, spacer=u'\N{NO-BREAK SPACE}'):
     """Similar to django's intcomma but one can specify the character used to
     separate the groups of digits (a non-breaking space is used by default).
     """
