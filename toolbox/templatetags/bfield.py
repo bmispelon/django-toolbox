@@ -5,6 +5,7 @@ incompatibility issues with it, so it was turned into an independent module.
 """
 
 from django import template
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
@@ -26,6 +27,7 @@ WRAP_NOBREAK = 2
 _USE_FIELD_LABEL = object()
 
 
+@python_2_unicode_compatible
 class BField(object):
     def __init__(self, field, wrap=None, label=None, klass=None, helptext=None):
         self.field = field
@@ -43,7 +45,7 @@ class BField(object):
         else:
             return cls(field, **kwargs)
     
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.render()
         except AttributeError:

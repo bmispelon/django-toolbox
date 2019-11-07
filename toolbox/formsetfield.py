@@ -3,6 +3,7 @@ from django.forms.fields import Field
 from django.forms.widgets import Widget
 from django.forms.formsets import BaseFormSet, formset_factory
 from django.core.exceptions import ValidationError
+from django.utils.encoding import python_2_unicode_compatible
 
 
 class FormWithFormsetField(Form):
@@ -34,6 +35,7 @@ class FormsetField(Field):
         return BoundFormsetField(form, self, field_name)
 
 
+@python_2_unicode_compatible
 class BoundFormsetField(BoundField):
     def __init__(self, form, field, name):
         super(BoundFormsetField, self).__init__(form, field, name)
@@ -49,7 +51,7 @@ class BoundFormsetField(BoundField):
                 prefix=form.add_prefix(name),
             )
     
-    def __unicode__(self):
+    def __str__(self):
         raise NotImplementedError
 
     def as_widget(self, widget=None, attrs=None, only_initial=False):

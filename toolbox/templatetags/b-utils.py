@@ -3,6 +3,7 @@ A collection of template filters to cutomize form elements inside templates.
 """
 
 from django import template
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
@@ -25,12 +26,13 @@ DEFAULT_WRAPPER_CLASS = 'fieldWrapper'
 
 
 
+@python_2_unicode_compatible
 class BLabeledField(object):
     """A small class that allows chaining the different filters."""
     def __init__(self, field, label=None):
         self.field, self.label = field, label
     
-    def __unicode__(self):
+    def __str__(self):
         field = self.field
         label = self.label
         
@@ -50,6 +52,7 @@ class BLabeledField(object):
         return field.label_tag(contents=self.label, attrs=attrs)
 
 
+@python_2_unicode_compatible
 class BWrappedField(object):
     """A small class that allows chaining the different filters."""
     def __init__(self, field, br=False, klass=None, show_label=True):
@@ -58,7 +61,7 @@ class BWrappedField(object):
         self.klass = klass
         self.show_label = show_label 
     
-    def __unicode__(self):
+    def __str__(self):
         field = self.field
         br = self.br
         
@@ -95,6 +98,7 @@ class BWrappedField(object):
         })
 
 
+@python_2_unicode_compatible
 class BClassedField(object):
     """A small class that allows adding custom css classes to form fields.
     If the item passed is a regular django field, the class will be added to it.
@@ -102,7 +106,7 @@ class BClassedField(object):
     def __init__(self, field, klass):
         self.field, self.klass = field, klass
     
-    def __unicode__(self):
+    def __str__(self):
         klass = self.make_class()
         field = self.field
         if isinstance(field, BWrappedField):
