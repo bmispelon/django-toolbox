@@ -167,7 +167,7 @@ def _make_links_absolute(html, base_url):
 
     parsed.make_links_absolute(base_url)
 
-    return tostring(parsed)
+    return tostring(parsed, encoding='unicode')
 
 
 class HtmlEmailTemplate(EmailTemplate):
