@@ -6,7 +6,7 @@ except ImportError: # django 1.4
     from django.template.defaultfilters import slice_filter
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
-from itertools import izip
+from django.utils.six.moves import zip
 
 register = template.Library()
 
@@ -96,7 +96,7 @@ class ZipChain(object):
             return cls(var, *iterables)
     
     def __iter__(self):
-        return izip(*self.iterables)
+        return zip(*self.iterables)
 
 
 @register.filter('zip')
