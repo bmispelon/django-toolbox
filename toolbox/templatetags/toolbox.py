@@ -4,7 +4,7 @@ try: # django < 1.4
     from django.template.defaultfilters import slice_ as slice_filter
 except ImportError: # django 1.4
     from django.template.defaultfilters import slice_filter
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
 from itertools import izip
 
@@ -36,7 +36,7 @@ def intspace(i, spacer='\xc2\xa0'): # Non-breaking space
     """Similar to django's intcomma but one can specify the character used to
     separate the groups of digits (a non-breaking space is used by default).
     """
-    spacer = smart_unicode(spacer)
+    spacer = smart_text(spacer)
     
     try:
         i = int(i)
