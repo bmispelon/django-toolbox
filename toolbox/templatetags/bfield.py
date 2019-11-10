@@ -132,7 +132,7 @@ def split_fields(fields):
         * A string of comma-separated fields
         * A string of whitespace-separated fields
     """
-    if isinstance(fields, basestring):
+    if isinstance(fields, str):
         fields = fields.replace(',', ' ').split()
     return fields
 

@@ -122,7 +122,7 @@ class EmailTemplate(object):
             return value
         
         elif field_type == LIST:
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 value = value.split('\n')
             if strip:
                 value = [l.strip() for l in value]
@@ -149,11 +149,11 @@ class EmailTemplate(object):
             return get_template(template_name), True
             
         if template is not None:
-            if not isinstance(template, basestring):
+            if not isinstance(template, str):
                 template = "\n".join(template)
             return engines['django'].from_string(template), True
             
-        if not isinstance(value, basestring) and value is not None:
+        if not isinstance(value, str) and value is not None:
             value = "\n".join(value)
         return value, False
 
