@@ -6,6 +6,7 @@ from django import template
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
+from django.utils.six import text_type
 
 register = template.Library()
 
@@ -111,7 +112,7 @@ class BClassedField(object):
         field = self.field
         if isinstance(field, BWrappedField):
             field.klass = klass
-            return field.__unicode__()
+            return text_type(field)
         return field.as_widget(attrs={'class': klass}) if field else ''
     
     def make_class(self):

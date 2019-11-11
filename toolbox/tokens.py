@@ -1,6 +1,7 @@
 from datetime import date
 from django.utils.http import int_to_base36, base36_to_int
 from django.utils.crypto import constant_time_compare, salted_hmac
+from django.utils.six import text_type
 
 class ExpiringTokenGenerator(object):
     # TODO: docstring
@@ -61,7 +62,7 @@ class ExpiringTokenGenerator(object):
     
     def _make_token_with_timestamp(self, timestamp, *args):
         t = self.value_tuple(*args) + (timestamp,)
-        value = ''.join(unicode(x) for x in t)
+        value = ''.join(text_type(x) for x in t)
         hash = self.do_hash(value)
         return self.format_hash(timestamp, hash)
     
